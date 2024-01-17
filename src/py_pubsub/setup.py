@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'py_pubsub'
+package_name = 'arm'
 
 setup(
     name=package_name,
@@ -22,8 +22,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'talker = py_pubsub.publisher_member_function:main',
-            'listener = py_pubsub.subscriber_member_function:main',
+            'motor_control_relay = arm.motor_control_relay:main',
+            'control_input = arm.input_publisher:main',
         ],
     },
 )
