@@ -12,6 +12,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         # Include gamepad config file
         ('share/' + package_name, ['config/gamepads.config']),
+        ('share/' + package_name, [package_name + '/flat_endpoints.json'])
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -24,6 +25,7 @@ setup(
         'console_scripts': [
             'motor_control_relay = arm.motor_control_relay:main',
             'control_input = arm.input_publisher:main',
+            'simple_input_publisher = arm.simple_input_publisher:main',
         ],
     },
 )

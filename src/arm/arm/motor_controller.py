@@ -8,6 +8,8 @@ from numpy import clip
 from pathlib import Path
 from typing import Callable, Any
 import logging
+import ifcfg
+import subprocess
 
 # TODO: Integrate logging with ROS
 logger = logging.getLogger(__name__)
@@ -17,7 +19,7 @@ class MotorControllerManager:
     _motor_controllers: dict[str, "MotorController"]
     _can_interface: "ODriveCanInterface"
     
-    def __init__(self) -> None:
+    def __init__(self, can_endpoints_dir) -> None:
         """Class for managing a group of ODrive motor controllers.
         
         Examples:
@@ -36,7 +38,7 @@ class MotorControllerManager:
         """
         # Key: node id, Value: MotorController
         self._motor_controllers = {}
-        self._can_interface = ODriveCanInterface()
+        self._can_interface = ODriveCanInterface(endpoint_lookup_file=can_endpoints_dir)
 
     def add_motor_controller(self, name: str, node_id: int, max_speed: float) -> None:
         if name not in self._motor_controllers:
@@ -110,9 +112,12 @@ class ODriveCanInterface():
             self.endpoint_data = json.load(f)
             self.endpoints = self.endpoint_data['endpoints']
 
+        
+        self._configure_bus_network(interface_name=interface)
+
         # Odrive CAN node ID
-        # self.bus = can.interface.Bus(interface='virtual')# interface, bustype='socketcan',)
         self.bus = can.interface.Bus(interface, bustype='socketcan',)
+
 
         # See https://docs.python.org/3/library/struct.html#format-characters
         self.format_lookup = {
@@ -126,6 +131,23 @@ class ODriveCanInterface():
     
     def __del__(self) -> None:
         self.bus.shutdown()
+    
+    def _configure_bus_network(self, interface_name: str, bitrate: int = 1000000):
+        interface = ifcfg.interfaces().get(interface_name)
+    
+        if interface is None:
+            print(f'Interface {interface_name} not found')
+            exit(0)
+
+        if 'UP' in interface.get('flags'):
+            print(f'Interface {interface_name} is already up')
+        else:
+            
+            subprocess.run(["sudo", "ip", "link", "set",
+                            interface_name, "up", "type", "can",
+                            "bitrate", str(bitrate)])
+            
+            print(f'Started interface {interface_name}')
 
     def flush_rx_buffer(self) -> None:
         # Flush CAN RX buffer so there are no more old pending messages
@@ -206,9 +228,9 @@ class ODriveCanInterface():
         Returns:
             tuple[int, int, int, int]: Resulting data from heartbeat.
         """
-        msg = self._can_interface._await_can_reply(node_id, ODriveCanInterface.COMMAND.HEARTBEAT) # FIXME: May pick up previous
+        msg = self._await_can_reply(node_id, ODriveCanInterface.COMMAND.HEARTBEAT) # FIXME: May pick up previous
         msg.data = msg.data[:7] # Remove unused bytes
-        error, state, result, traj_done = self._can_interface._unpack_can_reply('<IBBB', msg)
+        error, state, result, traj_done = self._unpack_can_reply('<IBBB', msg)
 
         return error, state, result, traj_done
 
@@ -280,22 +302,23 @@ class MotorController():
 
         self._can_interface.send_can_message(self._node_id, ODriveCanInterface.COMMAND.SET_AXIS_STATE, '<I', axis_state)
 
+        result = ProcedureResult.BUSY
         while result == ProcedureResult.BUSY:
 
-            self._can_interface.feed_watchdog(self._node_id) # Feed watchdog while waiting for axis to be set
+            self.feed_watchdog() # Feed watchdog while waiting for axis to be set
 
             error, state, result, _ = self._can_interface.get_heartbeat(self._node_id)
 
-            new_axis_state = AxisState(state) # FIXME: Will this ctor work if operation was unsuccessful? 
-
+            new_axis_state = AxisState(state)
             logger.debug(f"Axis state: {new_axis_state.name}")
 
             if result == ProcedureResult.SUCCESS:
                 logger.debug(f"Axis state set successfully {new_axis_state.name}")
-            else:
-                # Get disarm reason
-                logger.error(f"Axis state set failed: {AxisError(error).name}")
-                logger.error(f"Current axis state: {new_axis_state.name}")
+                return
+            
+        # Get disarm reason
+        logger.error(f"Axis state set failed: {AxisError(error).name}")
+        logger.error(f"Current axis state: {new_axis_state.name}")
     
     def get_errors(self) -> tuple[ODriveError, ODriveError]:
         """Get ODrive errors.
