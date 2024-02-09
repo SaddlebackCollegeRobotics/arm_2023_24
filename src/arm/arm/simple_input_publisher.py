@@ -34,7 +34,26 @@ class InputPublisher(Node):
 
             (ls_x, ls_y) = gmi.getLeftStick(gamepad, self.AXIS_DEADZONE)
             (rs_x, rs_y) = gmi.getRightStick(gamepad, self.AXIS_DEADZONE)
-            self.msg.data = [float(ls_y), float(rs_y)]
+            (x_hat, y_hat) = gmi.getHat(gamepad)
+
+            if gmi.getButtonValue(gamepad, 2): # south
+                grip_dir = -1.0
+            elif gmi.getButtonValue(gamepad, 3): # east
+                grip_dir = 1.0
+            else:
+                grip_dir = 0.0
+
+            if gmi.getButtonValue(gamepad, 8): #r1
+                ls_y = 0.0
+                rs_y = 0.0
+            else:
+                ls_x = 0.0
+                rs_x = 0.0
+            
+            # Azimuth, bicep, forearm, pitch, yaw, roll, grip_dir
+            self.msg.data = [float(ls_x), float(-ls_y), float(rs_y),
+                              float(y_hat), float(-rs_x), float(x_hat),
+                              float(grip_dir)]
         else:
             self.msg.data = [0.0, 0.0]
 

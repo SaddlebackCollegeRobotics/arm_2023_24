@@ -12,7 +12,8 @@ setup(
         ('share/' + package_name, ['package.xml']),
         # Include gamepad config file
         ('share/' + package_name, ['config/gamepads.config']),
-        ('share/' + package_name, [package_name + '/flat_endpoints.json'])
+        ('share/' + package_name, ['config/flat_endpoints.json']),
+        ('share/' + package_name, ['config/find_devpath.bash'])
     ],
     install_requires=['setuptools'],
     zip_safe=True,
