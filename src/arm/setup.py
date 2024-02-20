@@ -1,4 +1,5 @@
 from setuptools import setup
+from glob import glob
 
 package_name = 'arm'
 
@@ -13,7 +14,9 @@ setup(
         # Include gamepad config file
         ('share/' + package_name, ['config/gamepads.config']),
         ('share/' + package_name, ['config/flat_endpoints.json']),
-        ('share/' + package_name, ['config/find_devpath.bash'])
+        ('share/' + package_name, ['config/find_devpath.bash']),
+        # Include launch files
+        ('share/' + package_name + '/launch', glob('launch/*.yaml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

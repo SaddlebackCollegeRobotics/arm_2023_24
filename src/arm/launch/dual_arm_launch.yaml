@@ -1,0 +1,10 @@
+launch:
+
+- node:
+    pkg: "arm"
+    exec: "motor_control_relay"
+
+
+- node:
+    pkg: "arm"
+    exec: "simple_input_publisher"
