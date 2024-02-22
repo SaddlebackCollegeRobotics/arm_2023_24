@@ -30,6 +30,7 @@ setup(
             'motor_control_relay = arm.motor_control_relay:main',
             'control_input = arm.input_publisher:main',
             'simple_input_publisher = arm.simple_input_publisher:main',
+            'configure_odrive = arm.configure_odrive:main',
         ],
     },
 )

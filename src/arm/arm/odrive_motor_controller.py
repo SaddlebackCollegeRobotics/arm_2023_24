@@ -1,6 +1,7 @@
 from numpy import clip
 from odrive.enums import AxisState, ProcedureResult, AxisError, ODriveError
 from .odrive_can_interface import ODriveCanInterface
+from typing import Any
 
 
 class ODriveMotorController():
@@ -133,3 +134,9 @@ class ODriveMotorController():
 
     def get_encoder_estimates(self):
         return self._can_interface.get_encoder_estimates(self._node_id)
+    
+    def write_param(self, path: str, value: Any):
+        self._can_interface.write_param(self._node_id, path, value)
+
+    def read_param(self, path: str):
+        return self._can_interface.read_param(self._node_id, path)
