@@ -30,9 +30,11 @@ class InputPublisher(Node):
         
         gamepad = gmi.getGamepad(1)
 
+        # Trigger press acts as a safety switch as well as a workaround
+        # for a pygame bug that causes specifically 8bitdo controllers to
+        # register a constant input of 1.0 and -1.0 on joystick axes, when
+        # unplugged and plugged back in.
         if gamepad != None and gmi.getTriggers(gamepad, self.AXIS_DEADZONE)[1] > 0:
-        
-
 
             (ls_x, ls_y) = gmi.getLeftStick(gamepad, self.AXIS_DEADZONE)
             (rs_x, rs_y) = gmi.getRightStick(gamepad, self.AXIS_DEADZONE)
