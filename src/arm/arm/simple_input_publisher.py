@@ -28,9 +28,11 @@ class InputPublisher(Node):
 
     def timer_callback(self):
         
-        gamepad = gmi.getGamepad(0)
+        gamepad = gmi.getGamepad(1)
 
-        if gamepad != None:
+        if gamepad != None and gmi.getTriggers(gamepad, self.AXIS_DEADZONE)[1] > 0:
+        
+
 
             (ls_x, ls_y) = gmi.getLeftStick(gamepad, self.AXIS_DEADZONE)
             (rs_x, rs_y) = gmi.getRightStick(gamepad, self.AXIS_DEADZONE)
@@ -55,7 +57,7 @@ class InputPublisher(Node):
                               float(y_hat), float(-rs_x), float(x_hat),
                               float(grip_dir)]
         else:
-            self.msg.data = [0.0, 0.0]
+            self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         self.control_publisher.publish(self.msg)
 

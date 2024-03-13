@@ -109,6 +109,9 @@ class ODriveCanInterface():
                 return None
 
     def send_can_message(self, node_id: int, command_id: "ODriveCanInterface.COMMAND", input_types: str = "", *input_data: Any) -> None:
+        
+        self.flush_rx_buffer()
+
         self.bus.send(can.Message(
                 arbitration_id = (node_id << 5 | command_id),
                 data = struct.pack(input_types, *input_data) if input_types else b'',
