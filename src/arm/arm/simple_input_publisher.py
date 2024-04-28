@@ -54,12 +54,15 @@ class InputPublisher(Node):
                 ls_x = 0.0
                 rs_x = 0.0
             
-            # Azimuth, bicep, forearm, pitch, yaw, roll, grip_dir
+            
+            enable_precision_mode = 1 if gmi.getButtonValue(gamepad, 7) else 0
+
+            # Azimuth, bicep, forearm, pitch, yaw, roll, grip_dir, enable_precision_mode
             self.msg.data = [float(ls_x), float(-ls_y), float(rs_y),
                               float(y_hat), float(-rs_x), float(x_hat),
-                              float(grip_dir)]
+                              float(grip_dir), float(enable_precision_mode)]
         else:
-            self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         self.control_publisher.publish(self.msg)
 
