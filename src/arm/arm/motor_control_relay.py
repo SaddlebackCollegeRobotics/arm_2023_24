@@ -30,7 +30,7 @@ class MinimalPublisher(Node):
             1000000)
         
         self._odrive_manager.add_motor_controller('azimuth', 4, self._max_speed)
-        self._odrive_manager.add_motor_controller('bicep', 5, self._max_speed)
+        self._odrive_manager.add_motor_controller('bicep', 5, self._max_speed * 3)
         self._odrive_manager.add_motor_controller('forearm', 6, self._max_speed)
         self._odrive_manager.add_motor_controller('pitch',  7, self._max_speed)
         self._odrive_manager.add_motor_controller('yaw', 8, self._max_speed)

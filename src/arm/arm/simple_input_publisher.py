@@ -58,8 +58,8 @@ class InputPublisher(Node):
             enable_precision_mode = 1 if gmi.getButtonValue(gamepad, 7) else 0
 
             # Azimuth, bicep, forearm, pitch, yaw, roll, grip_dir, enable_precision_mode
-            self.msg.data = [float(ls_x), float(-ls_y), float(rs_y),
-                              float(y_hat), float(-rs_x), float(x_hat),
+            self.msg.data = [float(ls_x), float(ls_y), float(rs_y),
+                              float(-y_hat), float(-rs_x), float(x_hat),
                               float(grip_dir)]
         else:
             self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
