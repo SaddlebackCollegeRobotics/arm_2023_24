@@ -60,7 +60,7 @@ class InputPublisher(Node):
             # Azimuth, bicep, forearm, pitch, yaw, roll, grip_dir, enable_precision_mode
             self.msg.data = [float(ls_x), float(-ls_y), float(rs_y),
                               float(y_hat), float(-rs_x), float(x_hat),
-                              float(grip_dir), float(enable_precision_mode)]
+                              float(grip_dir)]
         else:
             self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
