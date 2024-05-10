@@ -62,7 +62,7 @@ class InputPublisher(Node):
                               float(y_hat), float(-rs_x), float(x_hat),
                               float(grip_dir)]
         else:
-            self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         self.control_publisher.publish(self.msg)
 
