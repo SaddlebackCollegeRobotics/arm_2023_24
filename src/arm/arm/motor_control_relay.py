@@ -21,7 +21,6 @@ class MinimalPublisher(Node):
         # Set up motor controllers ---------------------------------------
 
         self._max_speed = 3
-        self._precision_speed_factor = 0.5
 
         self.mcp_controller = MCPMotorController(get_package_share_directory('arm') + '/find_devpath.bash', 115200)
         self._odrive_manager = ODriveMotorControllerManager(
@@ -41,11 +40,7 @@ class MinimalPublisher(Node):
 
     def control_input_callback(self, msg: Float64MultiArray):
 
-        azimuth_vel, bicep_vel, forearm_vel, pitch_vel, yaw_vel, roll_vel, grip_dir, enable_precision_mode = msg.data
-
-        # Enabled precision mode 
-        new_max_speed = self._precision_speed_factor * self._max_speed if enable_precision_mode == 1 else self._max_speed
-        self._odrive_manager.for_each(ODriveMotorController.max_speed, new_max_speed)
+        azimuth_vel, bicep_vel, forearm_vel, pitch_vel, yaw_vel, roll_vel, grip_dir = msg.data
 
         self._odrive_manager['azimuth'].set_normalized_velocity(azimuth_vel)
         self._odrive_manager['bicep'].set_normalized_velocity(bicep_vel)
