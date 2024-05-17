@@ -56,16 +56,17 @@ class InputPublisher(Node):
                 ls_x = 0.0
                 rs_x = 0.0
             
-            controls_array = np.array([ls_x, -ls_y, rs_y,
-            y_hat, -rs_x, x_hat]).astype(float, copy = False) 
+            controls_array = [float(e) for e in [ls_x, -ls_y, rs_y,
+            y_hat, -rs_x, x_hat]]
 
             if gmi.getButtonValue(gamepad, 7):
-                controls_array *= self.PRECISION_FACTOR
-
+                controls_array = list(map(lambda e: self.PRECISION_FACTOR * e, controls_array))
+                print("Precise Input Mode: ", controls_array) 
+    
             controls_array.append(grip_dir)
 
             # Azimuth, bicep, forearm, pitch, yaw, roll, grip_dir, enable_precision_mode
-            self.msg.data = controls_array.tolist()
+            self.msg.data = controls_array
         else:
             self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
