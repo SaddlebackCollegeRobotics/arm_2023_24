@@ -31,6 +31,7 @@ class MinimalPublisher(Node):
         
         self._odrive_manager.add_motor_controller('azimuth', 4, self._max_speed)
         self._odrive_manager.add_motor_controller('bicep', 5, self._max_speed * 3)
+        self._odrive_manager.add_motor_controller('bicep', 5, self._max_speed * 3)
         self._odrive_manager.add_motor_controller('forearm', 6, self._max_speed)
         self._odrive_manager.add_motor_controller('pitch',  7, self._max_speed)
         self._odrive_manager.add_motor_controller('yaw', 8, self._max_speed)
@@ -43,14 +44,15 @@ class MinimalPublisher(Node):
 
         azimuth_vel, bicep_vel, forearm_vel, pitch_vel, yaw_vel, roll_vel, grip_dir = msg.data
 
-        # Enabled precision mode 
+        # Enabled precision mode
+        
         # new_max_speed = self._precision_speed_factor * self._max_speed if enable_precision_mode == 1 else self._max_speed
-        # self._odrive_manager.for_each(ODriveMotorController.max_speed, new_max_speed)
+        # self._odrive_manager.for_each(ODriveMotorController.set_max_speed, new_max_speed)
 
-        self._odrive_manager['azimuth'].set_normalized_velocity(azimuth_vel)
-        self._odrive_manager['bicep'].set_normalized_velocity(bicep_vel)
+        self._odrive_manager['azimuth'].set_normalized_velocity(-azimuth_vel)
+        self._odrive_manager['bicep'].set_normalized_velocity(-bicep_vel)
         self._odrive_manager['forearm'].set_normalized_velocity(forearm_vel)
-        self._odrive_manager['pitch'].set_normalized_velocity(pitch_vel)
+        self._odrive_manager['pitch'].set_normalized_velocity(-pitch_vel)
         self._odrive_manager['yaw'].set_normalized_velocity(yaw_vel)
         self._odrive_manager['roll'].set_normalized_velocity(roll_vel)
         
