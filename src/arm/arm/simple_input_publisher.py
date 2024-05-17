@@ -7,7 +7,7 @@ from std_msgs.msg import Float64MultiArray
 from ament_index_python.packages import get_package_share_directory
 
 from . import gamepad_input as gmi
-import numpy as mp
+import numpy as np
 
 class InputPublisher(Node):
 
@@ -56,7 +56,7 @@ class InputPublisher(Node):
                 ls_x = 0.0
                 rs_x = 0.0
             
-            controls_array = mp.array([ls_x, -ls_y, rs_y,
+            controls_array = np.array([ls_x, -ls_y, rs_y,
             y_hat, -rs_x, x_hat]).astype(float, copy = False) 
 
             if gmi.getButtonValue(gamepad, 7):
