@@ -17,7 +17,7 @@ class InputPublisher(Node):
         super().__init__('arm_input_publisher')
 
         self.PUBLISHER_PERIOD = 1/10 # seconds
-        self.PRECISION_FACTOR = 0.5
+        self.PRECISION_FACTOR = 0.25
 
         self.control_publisher = self.create_publisher(Float64MultiArray, '/arm/control_input', 10)
         self.msg = Float64MultiArray()
@@ -66,7 +66,10 @@ class InputPublisher(Node):
             controls_array.append(grip_dir)
 
             # Azimuth, bicep, forearm, pitch, yaw, roll, grip_dir, enable_precision_mode
-            self.msg.data = controls_array
+            try:
+                self.msg.data = controls_array
+            except:
+                print("Invalid controls_array!", controls_array)
         else:
             self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
