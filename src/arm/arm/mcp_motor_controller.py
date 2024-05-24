@@ -3,6 +3,7 @@ from subprocess import run, PIPE
 
 BUFFER_OR_INSTANT = 1  # 0 for buffer, 1 for instant write
 GRIP_ACCEL = 20
+POKER_ACCEL = 20
 
 # Wrapper class for Roboclaw Motor Controller interfacing
 class MCPMotorController:
@@ -19,6 +20,9 @@ class MCPMotorController:
 
     def set_grip_velocity(self, move_dir: int):
         self.rc.SpeedAccelM1(self.address, GRIP_ACCEL, int(move_dir))
+
+    def set_poker_velocity(self, move_dir: int):
+        self.rc.SpeedAccelM2(self.address, POKER_ACCEL, int(move_dir))
     
     # Get motor controller device paths using serial IDs
     def _get_motor_controller(self, dev_path_finder_file: str) -> str | None:

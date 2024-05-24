@@ -41,7 +41,7 @@ class MinimalPublisher(Node):
 
     def control_input_callback(self, msg: Float64MultiArray):
 
-        azimuth_vel, bicep_vel, forearm_vel, pitch_vel, yaw_vel, roll_vel, grip_dir, enable_precision_mode = msg.data
+        azimuth_vel, bicep_vel, forearm_vel, pitch_vel, yaw_vel, roll_vel, grip_dir, poker_dir, enable_precision_mode = msg.data
 
         # Enabled precision mode 
         new_max_speed = self._precision_speed_factor * self._max_speed if enable_precision_mode == 1 else self._max_speed
@@ -55,6 +55,7 @@ class MinimalPublisher(Node):
         self._odrive_manager['roll'].set_normalized_velocity(roll_vel)
         
         self.mcp_controller.set_grip_velocity(int(grip_dir))
+        self.mcp_controller.set_poker_velocity(int(poker_dir))
 
 
 

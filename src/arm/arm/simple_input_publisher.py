@@ -47,6 +47,13 @@ class InputPublisher(Node):
             else:
                 grip_dir = 0.0
 
+            if gmi.getButtonValue(gamepad, 1): # west
+                poker_dir = -1.0
+            elif gmi.getButtonValue(gamepad, 0): # north 
+                poker_dir = 1.0
+            else:
+                poker_dir = 0.0
+
             if gmi.getButtonValue(gamepad, 8): #r1
                 ls_y = 0.0
                 rs_y = 0.0
@@ -60,9 +67,10 @@ class InputPublisher(Node):
             # Azimuth, bicep, forearm, pitch, yaw, roll, grip_dir, enable_precision_mode
             self.msg.data = [float(ls_x), float(-ls_y), float(rs_y),
                               float(y_hat), float(-rs_x), float(x_hat),
-                              float(grip_dir), float(enable_precision_mode)]
+                              float(grip_dir), float(poker_dir), 
+                              float(enable_precision_mode)]
         else:
-            self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         self.control_publisher.publish(self.msg)
 
