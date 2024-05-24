@@ -56,6 +56,9 @@ class ODriveMotorController():
     def max_speed(self, value: float) -> None:
         self._max_speed = abs(value)
 
+    def set_max_speed(self, value:float) -> None:
+        self._max_speed = abs(value)
+
     def set_axis_state(self, axis_state: AxisState) -> None:
         """Sets the axis state of the motor.
 

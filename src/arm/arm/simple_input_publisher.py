@@ -7,6 +7,7 @@ from std_msgs.msg import Float64MultiArray
 from ament_index_python.packages import get_package_share_directory
 
 from . import gamepad_input as gmi
+import numpy as np
 
 class InputPublisher(Node):
 
@@ -16,6 +17,7 @@ class InputPublisher(Node):
         super().__init__('arm_input_publisher')
 
         self.PUBLISHER_PERIOD = 1/10 # seconds
+        self.PRECISION_FACTOR = 0.25
 
         self.control_publisher = self.create_publisher(Float64MultiArray, '/arm/control_input', 10)
         self.msg = Float64MultiArray()
@@ -61,16 +63,22 @@ class InputPublisher(Node):
                 ls_x = 0.0
                 rs_x = 0.0
             
-            
-            enable_precision_mode = 1 if gmi.getButtonValue(gamepad, 7) else 0
+            controls_array = [float(e) for e in [ls_x, -ls_y, rs_y,
+            y_hat, -rs_x, x_hat]]
+
+            if gmi.getButtonValue(gamepad, 7):
+                controls_array = list(map(lambda e: self.PRECISION_FACTOR * e, controls_array))
+                print("Precise Input Mode: ", controls_array) 
+    
+            controls_array.append(grip_dir)
 
             # Azimuth, bicep, forearm, pitch, yaw, roll, grip_dir, enable_precision_mode
-            self.msg.data = [float(ls_x), float(-ls_y), float(rs_y),
-                              float(y_hat), float(-rs_x), float(x_hat),
-                              float(grip_dir), float(poker_dir), 
-                              float(enable_precision_mode)]
+            try:
+                self.msg.data = controls_array
+            except:
+                print("Invalid controls_array!", controls_array)
         else:
-            self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         self.control_publisher.publish(self.msg)
 
