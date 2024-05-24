@@ -78,7 +78,7 @@ class InputPublisher(Node):
             except:
                 print("Invalid controls_array!", controls_array)
         else:
-            self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         self.control_publisher.publish(self.msg)
 

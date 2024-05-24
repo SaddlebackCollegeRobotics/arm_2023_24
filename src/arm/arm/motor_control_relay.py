@@ -40,7 +40,7 @@ class MinimalPublisher(Node):
 
     def control_input_callback(self, msg: Float64MultiArray):
 
-        azimuth_vel, bicep_vel, forearm_vel, pitch_vel, yaw_vel, roll_vel, grip_dir = msg.data
+        azimuth_vel, bicep_vel, forearm_vel, pitch_vel, yaw_vel, roll_vel, grip_dir, poker_dir = msg.data
 
         self._odrive_manager['azimuth'].set_normalized_velocity(-azimuth_vel)
         self._odrive_manager['bicep'].set_normalized_velocity(-bicep_vel)
