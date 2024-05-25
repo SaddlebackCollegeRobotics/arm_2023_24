@@ -4,7 +4,7 @@ from functools import partial
 from numpy import clip
 # Allow for this program to run standalone for testing without ROS packages
 if __name__ != '__main__':
-    from . import gamepad_input as gi
+    from ..src.arm.arm import gamepad_input as gi
     DEBUG = True
 else:
     DEBUG = True

@@ -2,4 +2,4 @@ launch:
 
 - node:
     pkg: "arm"
-    exec: "simple_input_publisher"
+    exec: "control_input"
