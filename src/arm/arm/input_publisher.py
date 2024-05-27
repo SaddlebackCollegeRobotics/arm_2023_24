@@ -4,23 +4,28 @@ import math
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float64MultiArray
+from std_srvs.srv import Empty
 from ament_index_python.packages import get_package_share_directory
 
 from . import gamepad_input as gmi
 import numpy as np
+
 
 class InputPublisher(Node):
 
     def __init__(self):
 
         # Give the node a name.
-        super().__init__('arm_input_publisher')
+        super().__init__('arm/input_publisher')
 
         self.PUBLISHER_PERIOD = 1/10 # seconds
         self.PRECISION_FACTOR = 0.25
 
         self.control_publisher = self.create_publisher(Float64MultiArray, '/arm/control_input', 10)
+        self.reset_arm_cli = self.create_client(Empty, '/arm/reset_system')
+
         self.msg = Float64MultiArray()
+        self.reset_arm_request = Empty.Request()
 
         self.timer = self.create_timer(self.PUBLISHER_PERIOD, self.timer_callback)
 
@@ -74,6 +79,21 @@ class InputPublisher(Node):
             self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         self.control_publisher.publish(self.msg)
+
+
+    def reset_drive(self):
+    
+        if (self.reset_arm_cli.service_is_ready() == False):
+            print("Warning: Arm reset service is unavailable!")
+            return
+        
+        self.future = self.reset_arm_cli.call_async(self.reset_arm_request)
+        rclpy.spin_until_future_complete(self, self.future)
+        
+        if (self.future.result() != None):
+            print("Successfully reset arm system!")
+        else:
+            print("Warning: Failed to reset arm system!")
 
 
 def main(args=None):

@@ -22,7 +22,7 @@ class MotorControlRelay(Node):
         self.control_input_subscriber = self.create_subscription(Float64MultiArray, '/arm/control_input', self.control_input_callback, 10)
         self._heartbeat_subscriber = self.create_subscription(EmptyMsg, '/system/heartbeat', self.reset_heartbeat, 10)
         self._status_publisher = self.create_publisher(String, '/arm/status', 10)
-        self.reset_odrives_srv = self.create_service(EmptySrv, '/arm/reset_odrives', self.reset_odrives)
+        self.reset_arm_srv = self.create_service(EmptySrv, '/arm/reset_system', self.reset_odrives)
 
         # Listen and react to system heartbeat ----------------------
         self.HEARTBEAT_TIMEOUT = 2.0
