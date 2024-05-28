@@ -36,10 +36,10 @@ class MotorControlRelay(Node):
         self.WATCHDOG_FEED_PERIOD = 0.5
         self.watchdog_feed_timer = self.create_timer(self.WATCHDOG_FEED_PERIOD, self.feed_watchdogs)
         
-        # Drive system status ---------------------------------------
-        self.DRIVE_STATUS_PERIOD = 5
-        self.drive_status_timer = self.create_timer(self.DRIVE_STATUS_PERIOD, self.publish_drive_status)
-        self.drive_status_msg = String()
+        # Arm system status ---------------------------------------
+        self.ARM_STATUS_PERIOD = 5
+        self.arm_status_timer = self.create_timer(self.ARM_STATUS_PERIOD, self.publish_arm_status)
+        self.arm_status_msg = String()
 
         # Set up motor controllers ---------------------------------------
 
@@ -100,8 +100,8 @@ class MotorControlRelay(Node):
         self._odrive_manager.for_each(ODriveMotorController.feed_watchdog)
 
     def publish_drive_status(self):
-        self.drive_status_msg = self._odrive_manager.get_all_odrive_status()
-        self._status_publisher.publish(self.drive_status_msg)
+        self.arm_status_msg.data = self._odrive_manager.get_all_odrive_status()
+        self._status_publisher.publish(self.arm_status_msg)
 
 
 def main(args=None):
