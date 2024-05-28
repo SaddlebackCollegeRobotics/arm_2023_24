@@ -16,7 +16,7 @@ class InputPublisher(Node):
     def __init__(self):
 
         # Give the node a name.
-        super().__init__('arm/input_publisher')
+        super().__init__('arm_input_publisher')
 
         self.PUBLISHER_PERIOD = 1/10 # seconds
         self.PRECISION_FACTOR = 0.25
@@ -30,8 +30,11 @@ class InputPublisher(Node):
         self.timer = self.create_timer(self.PUBLISHER_PERIOD, self.timer_callback)
 
         self.AXIS_DEADZONE = 0.1
+
         gmi.setConfigFile(get_package_share_directory('arm') + '/gamepads.config')
         gmi.run_event_loop()
+
+        self.reset_arm_pressed = False
 
     def timer_callback(self):
         
@@ -60,7 +63,16 @@ class InputPublisher(Node):
             else:
                 ls_x = 0.0
                 rs_x = 0.0
-            
+
+            # Press Share and Options (+ and -) to reset arm system
+            if gmi.getButtonValue(gamepad, 4) and gmi.getButtonValue(gamepad, 5):
+                
+                if self.reset_arm_pressed == False:
+                    self.reset_arm_pressed = True
+                    self.reset_arm()
+            else:
+                self.reset_arm_pressed = False
+
             controls_array = [float(e) for e in [ls_x, -ls_y, rs_y,
             y_hat, -rs_x, x_hat]]
 
@@ -80,17 +92,17 @@ class InputPublisher(Node):
 
         self.control_publisher.publish(self.msg)
 
-
-    def reset_drive(self):
+    def reset_arm(self):
     
         if (self.reset_arm_cli.service_is_ready() == False):
             print("Warning: Arm reset service is unavailable!")
             return
         
         self.future = self.reset_arm_cli.call_async(self.reset_arm_request)
-        rclpy.spin_until_future_complete(self, self.future)
-        
-        if (self.future.result() != None):
+        self.future.add_done_callback(self.reset_arm_callback)        
+
+    def reset_arm_callback(self, future):
+        if (future.result() != None):
             print("Successfully reset arm system!")
         else:
             print("Warning: Failed to reset arm system!")

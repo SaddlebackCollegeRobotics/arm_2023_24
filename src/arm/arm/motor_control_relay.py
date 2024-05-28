@@ -17,7 +17,7 @@ class MotorControlRelay(Node):
     def __init__(self):
 
         # Give the node a name.
-        super().__init__('arm/motor_control_relay')
+        super().__init__('arm_motor_control_relay')
 
         self.control_input_subscriber = self.create_subscription(Float64MultiArray, '/arm/control_input', self.control_input_callback, 10)
         self._heartbeat_subscriber = self.create_subscription(EmptyMsg, '/system/heartbeat', self.reset_heartbeat, 10)
@@ -75,12 +75,14 @@ class MotorControlRelay(Node):
             
             self.mcp_controller.set_grip_velocity(int(grip_dir))
 
-    def reset_odrives(self, msg):
+    def reset_odrives(self, request, response):
         """Resets the odrives to closed loop control in case of
         a fatal error such as over-current.
         """
         self._odrive_manager.for_each(ODriveMotorController.clear_errors)
         self._odrive_manager.for_each(ODriveMotorController.set_axis_state, AxisState.CLOSED_LOOP_CONTROL)
+        
+        return response
 
     def reset_heartbeat(self, msg):
         self.last_heartbeat_time = time()
@@ -89,6 +91,8 @@ class MotorControlRelay(Node):
         
         self.is_heartbeat_active = time() - self.last_heartbeat_time < self.HEARTBEAT_TIMEOUT
         
+        print(self.is_heartbeat_active)
+
         if (self.is_heartbeat_active == False):
             self._odrive_manager.for_each(ODriveMotorController.set_normalized_velocity, 0.0)
 
