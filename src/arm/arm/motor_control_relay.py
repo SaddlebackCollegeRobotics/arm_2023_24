@@ -64,7 +64,7 @@ class MotorControlRelay(Node):
 
         if (self.is_heartbeat_active):
         
-            azimuth_vel, bicep_vel, forearm_vel, pitch_vel, yaw_vel, roll_vel, grip_dir = msg.data
+            azimuth_vel, bicep_vel, forearm_vel, pitch_vel, yaw_vel, roll_vel, grip_dir, poker_dir = msg.data
 
             self._odrive_manager['azimuth'].set_normalized_velocity(-azimuth_vel)
             self._odrive_manager['bicep'].set_normalized_velocity(-bicep_vel)
@@ -74,6 +74,7 @@ class MotorControlRelay(Node):
             self._odrive_manager['roll'].set_normalized_velocity(roll_vel)
             
             self.mcp_controller.set_grip_velocity(int(grip_dir))
+            self.mcp_controller.set_poker_velocity(int(poker_dir))
 
     def reset_odrives(self, request, response):
         """Resets the odrives to closed loop control in case of

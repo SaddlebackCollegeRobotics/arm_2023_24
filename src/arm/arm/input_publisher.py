@@ -50,6 +50,7 @@ class InputPublisher(Node):
             (rs_x, rs_y) = gmi.getRightStick(gamepad, self.AXIS_DEADZONE)
             (x_hat, y_hat) = gmi.getHat(gamepad)
 
+            
             if gmi.getButtonValue(gamepad, 2): # south
                 grip_dir = -1.0
             elif gmi.getButtonValue(gamepad, 3): # east
@@ -57,6 +58,13 @@ class InputPublisher(Node):
             else:
                 grip_dir = 0.0
 
+            if gmi.getButtonValue(gamepad, 0): # north
+                poker_dir = 1.0
+            elif gmi.getButtonValue(gamepad, 1): # west
+                poker_dir = -1.0
+            else:
+                poker_dir = 0.0
+                
             if gmi.getButtonValue(gamepad, 8): #r1
                 ls_y = 0.0
                 rs_y = 0.0
@@ -81,6 +89,7 @@ class InputPublisher(Node):
                 print("Precise Input Mode: ", controls_array) 
     
             controls_array.append(grip_dir)
+            controls_array.append(poker_dir)
 
             # Azimuth, bicep, forearm, pitch, yaw, roll, grip_dir, enable_precision_mode
             try:
@@ -88,9 +97,10 @@ class InputPublisher(Node):
             except:
                 print("Invalid controls_array!", controls_array)
         else:
-            self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+            self.msg.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
         self.control_publisher.publish(self.msg)
+
 
     def reset_arm(self):
     
